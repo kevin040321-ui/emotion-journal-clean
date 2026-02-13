@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "You are an emotional analysis assistant. Analyze the emotion of the diary briefly in Korean."
+            content: "사용자의 일기를 읽고 감정을 간단히 한국어로 분석해줘."
           },
           {
             role: "user",
@@ -29,11 +29,20 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
+    // 🔥 여기서 실제 OpenAI 응답 확인
+    if (!response.ok) {
+      return res.status(500).json({
+        result: "OpenAI 오류: " + JSON.stringify(data)
+      });
+    }
+
     const result = data.choices[0].message.content;
 
     res.status(200).json({ result });
 
   } catch (error) {
-    res.status(500).json({ result: "AI 분석 중 오류 발생" });
+    res.status(500).json({
+      result: "서버 내부 오류: " + error.message
+    });
   }
 }
